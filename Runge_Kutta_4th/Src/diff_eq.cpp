@@ -40,7 +40,7 @@ int main(){
     fout << scientific;
     fout.precision (8);
 
-    fout << "%Time(s)" << "," << "X-Position (X[2])" << "," << "Y-Position (X[1])" << "," << "Input U" << "\n";
+    fout << "Time(s)" << "," << "X-Position (X[2])" << "," << "Y-Position (X[1])" << "," << "Input U" << "\n";
 
     while (t<TF){
         //input
@@ -79,5 +79,5 @@ int main(){
         cout << "X[2] = " << X[2] << endl;
         cout << "t = " << t << endl;
 
-        system("pause");
+
 }
