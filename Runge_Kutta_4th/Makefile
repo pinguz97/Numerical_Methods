@@ -28,6 +28,6 @@ $(BINARY): $(OBJECTS)
 	$(CC) -c $(CXXFLAGS) -Wa,-a,-ad -o $@ $< >$*.lst
 
 clean:
-	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES) $(SOURCE_DIR)/*.lst
+	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES) $(SOURCE_DIR)/*.lst *.swp
 
 -include $(DEPFILES)
