@@ -1,4 +1,4 @@
-#include "diff_eq.h"
+#include "diff_eq_v2.h"
 #include <math.h>
 //dx/dt = y
 //dy/dt = u*(1-x^2)*y-x^2
@@ -8,31 +8,35 @@
 
 
 int main(){
+    const int n = 4;
+    const double A [4][4] = {{0, 0, 0, 0},{1, 0, 0, 0},{0, 1, 0, 0},{0, 0, 1, 0}};
+    const double c [4] = {0, 1/2, 1/2, 1};
+    const double b [4] = {1/6, 1/3, 1/3, 1/6};  
 
     double t;
     double dt;
     double TF;
+    double error;
     const int N = 2;
     const int M = 1;
     double X[N+1]; //state vector (index starts from 1)
     double U[N+1]; //input vector (index starts from 1)
-
-    // RK4 constants
-    double a14 = 0.166;
-    double a23 = 0.333;
-    
+  
     //function approximators
-    double K1, K2, K3, K4;
-    double L1, L2, L3, L4;
+    double K [4];
+    double L [4];
+
+    double s;
 
     //initials conditions
     t = 0.0;
     dt = 0.01;
     TF = 20;
+    error = 10e-3;
     X[1] = 0;
     X[2] = 2;
     U[1] = 1;
-/*     X[1] = 0;
+/*  X[1] = 0;
     X[2] = 1; */
     ofstream fout ("sim.csv");
     if(!fout){
@@ -50,24 +54,22 @@ int main(){
         double t_2 = t+0.5*dt;
         double t_3 = t*dt;
 
+        double s;
+        
+
+
         //at each time step, forward iterations
-
-        K1 = dt*func1(X[1]);
-        L1 = dt*func2(t,X[1],X[2],U[1]);
-
-        K2 = dt*func1(X[1]+0.5*L1);
-        L2 = dt*func2(t_2,X[1]+0.5*L1,X[2]+0.5*K1,U[1]);
-
-        K3 = dt*func1(X[1]+0.5*L2);
-        L3 = dt*func2(t_2,X[1]+0.5*L2,X[2]+0.5*K2,U[1]);
-
-        K4 = dt*func1(X[1]+L3);
-        L4 = dt*func2(t_3,X[1]+L3,X[2]+K3,U[1]);
+        int i = 1;
+        K[0] = dt*func1(t,X[1],X[2],U[1]);
+        L[0] = dt*func2(t,X[1],X[2],U[1]);
+        for (i;i<n;i++){
+            K[i] = dt*func1(t+dt*c[i],X[1]+L[i-1],X[2]+K[i-1],U[1]);
+        }
 
         //update X-Position
-        X[2] = X[2]+a14*(K1+K4)+a23*(K2+K3);
+        X[2] = X[2]+b[0]*(K[0]+K[3])+b[1]*(K[1]+K[2]);
         //update y-Position
-        X[1] = X[1]+a14*(L1+L4)+a23*(L2+L3);
+        X[1] = X[1]+b[0]*(L[0]+L[3])+b[1]*(L[1]+L[2]);
 
         //Output
         fout << t << "," << X[2] << "," << X[1] << "," << U[1] << "\n";
